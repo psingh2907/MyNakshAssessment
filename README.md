@@ -1,97 +1,211 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# OTP Verification Screen
 
-# Getting Started
+A production-ready, reusable OTP (One-Time Password) verification component built with React Native and TypeScript.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Overview
 
-## Step 1: Start Metro
+This project implements a complete OTP verification flow with a focus on code quality, maintainability, and reusability. The component can be easily integrated into different contexts like payment verification, password changes, or account verification.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Features
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### Core Requirements ✅
 
-```sh
-# Using npm
+- **4-digit OTP input** - Custom implementation without using any OTP libraries
+- **Verify button** - Logs OTP to console and simulates network delay (1.5s)
+- **Resend functionality** - Available after 60 seconds with visible countdown timer
+- **Timer display** - Shows countdown in MM:SS format
+
+### Enhanced Features 🚀
+
+- **Auto-submit** - Automatically verifies when all 4 digits are entered
+- **Paste support** - Users can paste 4-digit codes from clipboard
+- **Smart focus management** - Auto-advances to next field, backspace navigates to previous
+- **Visual feedback** - Clear states for focus, filled, error, and disabled
+- **Loading states** - Button shows loading indicator during verification
+- **Error handling** - Graceful error messages with retry capability
+- **Accessibility** - Proper labels and hints for screen readers
+- **Keyboard handling** - Dismisses keyboard on verify
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Button/              # Reusable button component
+│   └── OTPInput/            # Custom 4-digit OTP input
+├── screens/
+│   └── OTPScreen/           # Main OTP verification screen
+├── hooks/
+│   ├── useOTP.ts            # OTP state management
+│   ├── useTimer.ts          # Countdown timer logic
+│   └── useOTPVerification.ts # Verification flow logic
+├── services/
+│   └── otpService.ts        # Mock API service
+├── utils/
+│   ├── constants.ts         # App constants (colors, spacing, fonts)
+│   ├── strings.ts           # Centralized strings
+│   └── otpUtils.ts          # OTP validation helpers
+└── types/
+    └── index.ts             # TypeScript type definitions
+```
+
+## Architecture Decisions
+
+### 1. **No OTP Libraries**
+
+Built a custom OTP input component from scratch to have full control over behavior and styling.
+
+### 2. **Centralized Constants**
+
+- All colors, spacing, font sizes, and font weights are defined in `constants.ts`
+- All user-facing strings are in `strings.ts` for easy maintenance and future i18n support
+
+### 3. **Custom Hooks**
+
+Separated business logic into reusable hooks:
+
+- `useOTP` - Manages OTP input state and interactions
+- `useTimer` - Handles countdown timer logic
+- `useOTPVerification` - Manages verification flow
+
+### 4. **Component Architecture**
+
+- Reusable `Button` component with variants
+- Modular `OTPInput` component that can be used independently
+- Clean separation of concerns (components, hooks, services, utils)
+
+### 5. **TypeScript**
+
+- Strict typing throughout the codebase
+- No `any` types except where necessary (style arrays)
+- Proper interfaces for all props and return types
+
+### 6. **Modern React Patterns**
+
+- Function components (no `React.FC`)
+- Custom hooks for reusable logic
+- Proper use of `useCallback` and `useEffect` for performance
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 20
+- React Native development environment set up
+- iOS Simulator or Android Emulator
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# For iOS, install CocoaPods dependencies
+cd ios && pod install && cd ..
+```
+
+### Running the App
+
+```bash
+# Start Metro bundler
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# Run on iOS (in new terminal)
 npm run ios
 
-# OR using Yarn
-yarn ios
+# Run on Android (in new terminal)
+npm run android
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Usage
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```typescript
+import { OTPScreen } from './src/screens/OTPScreen/OTPScreen';
 
-## Step 3: Modify your app
+function App() {
+  const handleVerificationSuccess = () => {
+    console.log('OTP verified!');
+    // Navigate to next screen
+  };
 
-Now that you have successfully run the app, let's make changes!
+  return (
+    <OTPScreen
+      onVerificationSuccess={handleVerificationSuccess}
+      email="user@example.com"
+    />
+  );
+}
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## Key Implementation Details
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### OTP Input Logic
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+- Only accepts numeric input (0-9)
+- Auto-advances to next field on input
+- Backspace navigates to previous field when current is empty
+- Detects paste events and distributes digits across fields
+- Maintains focus state for visual feedback
 
-## Congratulations! :tada:
+### Timer Implementation
 
-You've successfully run and modified your React Native App. :partying_face:
+- Starts at 60 seconds on mount
+- Counts down to 0 with MM:SS formatting
+- Resets when resend is clicked
+- Disables resend button while active
 
-### Now what?
+### Verification Flow
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+1. User enters 4 digits
+2. Auto-submits or user clicks Verify
+3. Button shows loading state
+4. Mock API call with 1.5s delay
+5. OTP logged to console (as required)
+6. Success/error message displayed
+7. Success callback triggered after 1 second
 
-# Troubleshooting
+## Code Quality
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+- ✅ **TypeScript** - Strict typing, no `any` types
+- ✅ **Clean Code** - Readable, maintainable, well-structured
+- ✅ **Reusability** - Components can be used in different contexts
+- ✅ **Performance** - Optimized with `useCallback` and proper memoization
+- ✅ **Accessibility** - Screen reader support, proper labels
+- ✅ **Error Handling** - Comprehensive error states and user feedback
+- ✅ **Testing Ready** - Structure supports easy unit testing
 
-# Learn More
+## Testing Checklist
 
-To learn more about React Native, take a look at the following resources:
+- [x] Enter 4 digits manually
+- [x] Paste 4-digit code
+- [x] Backspace navigation
+- [x] Verify button functionality
+- [x] Timer countdown (60s → 0)
+- [x] Resend button enables after timer
+- [x] Error handling
+- [x] Success flow
+- [x] Auto-submit on complete
+- [x] Keyboard dismissal
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## Future Enhancements
+
+Potential improvements for production:
+
+- Unit tests with Jest and React Native Testing Library
+- E2E tests with Detox
+- Biometric authentication option
+- Dark mode support
+- Internationalization (i18n)
+- Analytics integration
+- Rate limiting for security
+
+## Notes
+
+- The OTP service is mocked for demonstration purposes
+- In production, replace `otpService.ts` with actual API calls
+- All strings are centralized for easy translation
+- Component is designed to be reusable across different use cases
+
+---
+
+Built with ❤️ using React Native and TypeScript
