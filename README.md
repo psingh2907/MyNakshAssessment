@@ -3,6 +3,9 @@
 Interactive chat screen for the [MyNaksh](https://www.mynaksh.com/) frontend assessment: swipe-to-reply, icon reactions, AI feedback (Like/Dislike + chips), and session rating. The UI uses a **cosmic purple + gold** palette aligned with astrology branding (mystical, premium).
 
 ---
+## Demonstration Video
+
+https://github.com/user-attachments/assets/1916ca9e-b88f-4d10-9d32-e363504bb3e5
 
 ## Steps to Run the App
 
@@ -89,6 +92,7 @@ Reanimated is enabled via `react-native-reanimated/plugin` in `babel.config.js` 
 We use **React Native Gesture Handler** with a **composition + worklet** approach.
 
 ### Gestures
+
 
 1. **Swipe-to-reply (Pan)**  
    - `Gesture.Pan()` on non-user, non-event messages.  
